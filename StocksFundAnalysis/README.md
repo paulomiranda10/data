@@ -32,8 +32,10 @@ After I collected all those information, I use Excel to apply a formula, that I 
 
 - Have Fun !!!
 
-### Pics from Execution
+### Pics from Execution and final result
 ![plot](./pic1.png)
-<img src="./pic1.png">
+![plot](./pic2.png)
+<!--<img src="./pic1.png">-->
+
 
 

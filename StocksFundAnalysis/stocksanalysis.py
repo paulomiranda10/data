@@ -1,40 +1,13 @@
 import pandas as pd
 import numpy as np
 
-#import streamlit as st
-#import streamlit.components.v1 as components
-
-# for werb scraping
+# for web scraping
 from bs4 import BeautifulSoup as soup
 from urllib.request import urlopen, Request
 from pathlib import Path
 
 import warnings
 warnings.filterwarnings('ignore')
-
-################################################################################
-### Get Input Parameters
-################################################################################
-def inputParameters(my_bar):
-    #image=mpimg.imread('tradder_icon.jpg')
-    #st.image(image, width=200, caption="Stock's Bot")
-
-    #st.title("Stock's Robot")
-    
-    #tickerSymbol = st.sidebar.text_input('Ticker to forecast: ', '')
-
-    show_custom = st.sidebar.checkbox("Customize Weights")
-
-    dy = st.sidebar.number_input("Dividend Yield: ")
-
-    #increase_days = st.sidebar.number_input("Increasing days: ", 1, 20, 1, 1)
-
-    # The goals to peak are: 
-    # Conservative: High avg return and Low deviation/volatility
-    # Aggresive:    High avg return and High deviation/volatility
-    #
-    my_bar.progress(0)
-    return show_custom, dy
 
 ################################################################################
 ### Get Stikers Codes
@@ -76,6 +49,7 @@ def get_tickers():
 ### Get the metrics for one ticker
 ################################################################################
 def get_metrics(ticker):
+    #print(" ===> Entrei get_metrics <=== ")
     metrics = []
 
     print("Ticker Inside ===> " + ticker)
@@ -84,11 +58,15 @@ def get_metrics(ticker):
     # opens the connection and downloads html page from url
     #uClient = uReq(page_url)
     try:
+
         r = Request(page_url, headers={'User-Agent': 'Mozilla/5.0'})
 
         # parses html into a soup data structure to traverse html
         # as if it were a json data type.
-        page_soup = soup(urlopen(r).read(), "html.parser")
+        try:
+            page_soup = soup(urlopen(r, timeout=100).read(), "html.parser")
+        except:
+            print("Timeout Error !")
         #uClient.close()
 
         # finds each ticker indicator from the top of the page
@@ -265,12 +243,11 @@ def get_metrics(ticker):
     #    for container in containers:
     #        indicator = container.find("div", {"class": "card-body d-flex align-items-center justify-content-center"}).div.span.text
     #        metrics.append(indicator)
-
-        return metrics
     except:
-        print("Dados não encontrados para o ticker " + ticker)
+        print("There is no data for the ticker " + ticker)
         return metrics
-
+    #print(" ===> Sai get_metrics <=== ")
+    return metrics
 
 
 ################################################################################ 
@@ -279,14 +256,6 @@ def get_metrics(ticker):
 ##### 
 ################################################################################ 
 def main():
-#    my_bar = st.sidebar.progress(0)
-
-#    show_custom, dy = inputParameters(my_bar)
-
-#    tickers = get_tickers(my_bar)
-    #text = "R$ 60,55"
-    #numero = float(text[3:].replace(",", "."))
-
     my_file = Path("tickers.csv")
     there_is_file = my_file.exists()
     #there_is_file =  False
@@ -299,16 +268,10 @@ def main():
         tickers.to_csv (r'tickers.csv', index = False, header=True)
 
     size = len(tickers)
-    print("Tickers recuperados : " + str(size))
-
-    #Faz join com a B3.csv para buscar Setor NAICS, Setor, Subsetor e Segmento
-    #
-    #
+    print("Tickers read : " + str(size))
 
     my_file = Path("metrics.csv")
     there_is_file = my_file.exists()
-    #there_is_file =  False
-    #st.markdown("Tem arquivo = " + str(there_is_file))
     if there_is_file:
         df_metrics = pd.read_csv('metrics.csv', encoding= 'unicode_escape')
     else:
@@ -319,20 +282,12 @@ def main():
 
     df_metrics_index = df_metrics.copy()
     df_metrics_index.reset_index(level=0, inplace=True)
-    #df_metrics_index.drop(['cotacao', 'valorizacao', 'pl', 'pvp', 'dy', 'roe'], axis='columns', inplace=True)
     df_metrics_index = df_metrics_index[['ticker']]
 
     df_metrics_index.set_index('ticker', inplace=True)
     tickers.set_index('ticker', inplace=True)
 
-    #print(df_metrics_index)
-    #print(tickers)
-    #print(df_metrics_index.index.values.tolist())
     tickers = tickers.drop(df_metrics_index.index.values.tolist())
-    #print(tickers)
-
-    #result  = tickers[tickers.index.isin(df_metrics_index.index.values.tolist())]
-    #df.index.values.tolist()
 
     package_size = 25
     size = len(tickers)
@@ -347,8 +302,8 @@ def main():
         if metrics != []:
             perc = ( (i+1) / size) * 100
             print(ticker)
-            print(" Executado: " +  str(perc))
-            #print(metrics)
+            #print(" Executing: " +  str(perc))
+            print(" Executing: {:.2f}".format(perc) + "%")
             
             cotacao             = float( metrics[0][3:].replace(".", "").replace(",", ".")) 
             valorizacao         = float( metrics[1].replace(".", "").replace(",", ".").replace("%","").replace(" ","")) if metrics[1].replace(".", "").replace(",", ".").replace("%","").replace(" ","") != '-' else ""
@@ -441,8 +396,6 @@ def main():
     df_dy_roe.set_index('ticker', inplace=True)
     print(df_dy_roe)
     
-    #df_metrics.set_index('ticker').join(df_dy_roe.set_index('ticker'))
-    #df_metrics = df_metrics.join(df_dy_roe.set_index('ticker'), on='ticker')
     df_metrics = df_metrics.join(df_dy_roe, lsuffix='_metr', rsuffix='_dyroe')
     df_metrics.reset_index(inplace=True)
     df_metrics = df_metrics.rename(columns = {'index':'ticker'})
