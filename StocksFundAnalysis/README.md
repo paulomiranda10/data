@@ -37,5 +37,3 @@ After I collected all those information, I use Excel to apply a formula, that I 
 ![plot](./pic2.png)
 <!--<img src="./pic1.png">-->
 
-
-
