@@ -27,12 +27,12 @@ will continue, more or less, from where it was stopped.
 2) The Finacial web site changed its strutured os tags.
 In that case the web scrapping program must be change to accomodate the new structure. That's the downside of use web scrapping.
 
-## What can go wrong ?
+## What after that ?
 After I collected all those information, I use Excel to apply a formula, that I created, to score the best stocks based on, DY, ROE, Debts, etc.
 
 - Have Fun !!!
 
-### Pics from Execution and final result
+### Pics From Execution and Final Result
 ![plot](./pic1.png)
 ![plot](./pic2.png)
 <!--<img src="./pic1.png">-->
