@@ -1,0 +1,23 @@
+FROM debian:latest
+
+RUN apt update -y && \
+    apt install -y \
+    libpq-dev \
+    python3-pip \
+    python3-setuptools \
+    unixodbc \
+    unixodbc-dev
+
+RUN mkdir /home/backend/
+
+VOLUME /home/backend/
+
+WORKDIR /home/backend/
+
+COPY requirements.txt .
+COPY api.py .
+
+RUN pip3 install -r requirements.txt
+
+CMD ["python3", "-u", "/home/backend/api.py"]
+

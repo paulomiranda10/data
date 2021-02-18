@@ -1,0 +1,8 @@
+venv_ac/
+__pycache__/
+.vscode/*
+*.ipynb
+.git
+*.csv
+/tmp/*
+jupyter/

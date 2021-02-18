@@ -1,0 +1,24 @@
+FROM debian:latest
+
+RUN apt update -y && \
+    apt install -y \
+    libpq-dev \
+    python3-pip \
+    python3-setuptools \
+    unixodbc \
+    unixodbc-dev
+
+RUN mkdir /home/frontend/
+
+VOLUME /home/frontend/
+
+WORKDIR /home/frontend/
+
+COPY requirements.txt .
+COPY app.py .
+COPY templates .
+
+RUN pip3 install -r requirements.txt
+
+CMD ["python3", "-u", "/home/frontend/app.py"]
+
