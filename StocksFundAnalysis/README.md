@@ -33,5 +33,5 @@ After I collected all those information, I use Excel to apply a formula, that I 
 - Have Fun !!!
 
 ### Pics from Execution
-(https://github.com/paulomiranda10/data-science-portfolio/tree/master/StocksFundAnalysis/pic1.png)
+!https://github.com/paulomiranda10/data-science-portfolio/tree/master/StocksFundAnalysis/pic1.png
 
