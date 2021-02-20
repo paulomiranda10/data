@@ -60,7 +60,7 @@ def inputParameters(my_bar):
 
     show_sim = st.sidebar.checkbox("Show Simulation")
 
-    initial_invest = st.sidebar.number_input("Initial Investiment $: ", 1000, 500000, 10000, 1000)
+    initial_invest = st.sidebar.number_input("Initial Investment $: ", 1000, 500000, 10000, 1000)
 
     increase_days = st.sidebar.number_input("Increasing days: ", 1, 20, 1, 1)
     decrease_days = st.sidebar.number_input("Decreasing days: ", 1, 20, 1, 1)
