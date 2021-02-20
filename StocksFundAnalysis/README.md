@@ -16,7 +16,7 @@ I use the libriries BeautifulSoup for the web scrapping and pandas to work with 
 There are two options:
 1) Delete the tickers.csv and the metrics.csv files and then run the program (python stockanalysis.py)
     This will recreate all files and generate the metrics.csv with all the financial information related to the tickers
-2) Delete onde the metrics.csv and run the program
+2) Delete only the metrics.csv and run the program
     This will generate an update metrics.csv without reading all tickers symbols again
 
 ## What can go wrong ?
