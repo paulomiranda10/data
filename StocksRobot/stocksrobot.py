@@ -2,9 +2,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from decimal import Decimal
-#import pprint
-#import requests
-#import json  
+
 from pandas.io.json import json_normalize  
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -13,14 +11,12 @@ import streamlit as st
 import streamlit.components.v1 as components
 import plotly.graph_objects as go
 
-#from streamlit import caching
 
-#from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
 import pandas_datareader.data as web
 import yfinance as yf
 from pandas_datareader._utils import RemoteDataError
 from pathlib import Path
-#import SessionState
+
 from bokeh.plotting import figure
 import matplotlib.image as mpimg
 import altair as alt
@@ -28,13 +24,11 @@ import mplfinance as fplt
 
 from bokeh.io import output_file, show
 from bokeh.models import CustomJS, ColumnDataSource
-#from bokeh.sampledata.stocks import MSFT
+
 
 
 import warnings
 warnings.filterwarnings('ignore')
-
-#yf.pdr_override()
 
 ################################################################################
 ### Stocks Robot
@@ -102,9 +96,8 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
     
     #get the data for this ticker
     try:
-#    print(start_date)
         prices = web.DataReader(ticker, 'yahoo', start=start_date, end=end_date).Close
-#        st.markdown(str(len(prices)))
+        #st.markdown(str(len(prices)))
         #st.markdown('Lenght of data from yahoo finance: ' + str(len(prices)))
         if (len(prices) < 30):
             #print('There is few data for this ticher: ' + ticker)
@@ -124,9 +117,6 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
     #this will store all simulated returns
     pct_return_after_period = []
     buy_dates = []
-
-    # Temporário apenas para checar o retorno e desvio
-#    df_return_std = pd.DataFrame(columns=['date', 'price_buy', 'sell_price', 'pct_return'])
 
     #assume we buy the stock on each day in the range
     for buy_date, buy_price in prices.iteritems():
@@ -150,19 +140,6 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
             st.markdown('Return: %s%%'%round(pct_return*100,1))
             st.markdown('-------------------')
 
-        # Apenas para checar o retorno e desvio
-#        df_return_std = df_return_std.append({  'date': buy_date, 
-#                                                'price_buy': round(buy_price,2), 
-#                                                'sell_price': round(sell_price,2),
-#                                                'pct_return': round(pct_return,2)
-#                                                }, ignore_index=True)
-
-
-    #'pct_return_after_period', pct_return_after_period
-    # Apenas para checar o retorno e desvio
-#    df_return_std.to_csv (r'df_return_std.csv', index = False, header=True)
-    #st.markdown('Média : %s, Desvio Padrão : %s'%(np.mean(pct_return_after_period),round(np.std(pct_return_after_period),2)))
-
     #if no data collected return default values
     if len(pct_return_after_period) == 0:
         return -np.inf, np.inf, None
@@ -171,7 +148,6 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
     return np.round(np.mean(pct_return_after_period), 2), np.round(np.std(pct_return_after_period), 2), [buy_dates, pct_return_after_period]
 
 
-#def leitura(my_bar, start_date, end_date, return_period_weeks):
 def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, values_dev, tickerSymbol):
     priceData = []
     df_stock = pd.read_csv('B3_new.csv', encoding= 'unicode_escape')
@@ -179,7 +155,7 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
     classes_in = ['ON','PN','PN Resg','PNA','PNB','PNC','PND','PNE','PNF','PNG','PNAB','PNAE','PNAG']
     df_stock = df_stock[df_stock.Classe.isin(classes_in)]
     
-    # Para retirar bancos ca equação
+    # To take out banks 
 #    seg_out = ['Bancos']
 #    df_stock = df_stock[df_stock.Classe.isin(classes_in) & 
 #                        ~df_stock.Classe.isin(seg_out)
@@ -197,10 +173,8 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
     if there_is_file:
         stock_matrix = pd.read_csv('stocks_returns_std.csv', encoding= 'unicode_escape')
     else:
-        stock_matrix = pd.DataFrame(columns=['Ticker', 'Return', 'StdDeviation'])
+        stock_matrix = pd.DataFrame(columns=['Ticker', 'Return', 'Deviation'])
 
-        # filtrando um pouco
-        #df_stock = df_stock.sample(n = 50)
 
         size = len(df_stock)
         #st.markdown("Size = " + str(size))
@@ -210,7 +184,6 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
         #st.info(" == info == ")
         #st.success(" == success == ")
         #st.exception(e)
-#        for i in range(0, 50): 
         for i in range(0, size): 
             progress = int(i+1/size)
             #st.warning(str(progress))
@@ -228,7 +201,7 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
 #                avg_return = Decimal(avg_return)
 #                avg_return = round(avg_return,2)
 
-                stock_matrix = stock_matrix.append({'Ticker': ticker, 'Return': avg_return, 'StdDeviation': dev_return}, ignore_index=True)
+                stock_matrix = stock_matrix.append({'Ticker': ticker, 'Return': avg_return, 'Deviation': dev_return}, ignore_index=True)
             except :
                 continue
         #st.info(" == Loading finished == ")
@@ -237,7 +210,7 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
     stock_matrix = stock_matrix[~stock_matrix.Return.isin(["-inf"])]
     my_bar.progress(100)
 
-    filter = 'Return >= ' + str(values_return[0]) + ' & Return <= ' + str(values_return[1]) + ' & StdDeviation >= ' + str(values_dev[0]) + ' & StdDeviation <= ' + str(values_dev[1])
+    filter = 'Return >= ' + str(values_return[0]) + ' & Return <= ' + str(values_return[1]) + ' & Deviation >= ' + str(values_dev[0]) + ' & Deviation <= ' + str(values_dev[1])
     #st.info(" == Filtro ==> " + filter)
 
     'Filtered Tickers', stock_matrix.query(filter)
@@ -316,70 +289,8 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
         source = tickerDf.copy()
         source.reset_index(level=0, inplace=True)
 
-        #'Teste', tickerDf
-
-#        open_close_color = alt.condition("datum.Open <= datum.Close",
-#                                        alt.value("#06982d"),
-#                                        alt.value("#ae1325"))
-
-#        base = alt.Chart(source).encode(
-#            alt.X('Date',
-#                axis=alt.Axis(
-#                    format='%m/%d',
-#                    labelAngle=-45,
-#                    title='Dates'
-#                )
-#            ),
-#            color=open_close_color
-#        )
-
-#        rule = base.mark_rule().encode(
-#            alt.Y(
-#                'Low',
-#                title='Price',
-#                scale=alt.Scale(zero=False),
-#            ),
-#            alt.Y2('High')
-#        )
-
-#        bar = base.mark_bar().encode(
-#            alt.Y('Open'),
-#            alt.Y2('Close')
-#        )
-#        st.altair_chart((rule + bar), use_container_width=True)
-
-#        fplt.plot(
-#                    tickerDf,
-#                    type='candle',
-#                    style='charles',
-#                    title='Ticker: ' + tickerSymbol,
-#                    ylabel='Price ($)',
-#                    volume=True,
-#                    ylabel_lower='Shares\nTraded',
-#                    savefig='candle.png'
-#                    ) 
-             
-
-#        st.bokeh_chart('candle.png', use_container_width=True)
-
-##########
-        # https://medium.com/datadriveninvestor/stock-market-data-analysis-building-candlestick-interactive-charts-with-plotly-and-python-bd7866dcb4c1
-
-        # Importing libraries 
-#        from pandas.testing import assert_frame_equal
-        #import plotly.express as px
-
-        # Define dataframe variable
-        #df = pd.DataFrame()
-        # Define stock that will be analysed
-        #stock = 'BBAS3.SA'
-        # Import data into dataframe
-        #df = web.DataReader(stock, data_source='yahoo', start='01-01-2010')
-        #df.head()
-
         my_file = Path("candle-web.html")
         there_is_file = my_file.exists()
-        #there_is_file =  False
 
         #st.markdown("Tem arquivo = " + str(there_is_file))
 
@@ -444,7 +355,6 @@ def analyze(my_bar, start_date, end_date, return_period_weeks, values_return, va
 
             # Create Figure and plot
             fig = go.Figure(data=data, layout=layout)
-    #        path_and_file = "/home/paulo/Projetos/data-science-portfolio/StocksRobot/venv_stock/lib/python3.8/site-packages/streamlit/static/candle-web.html" 
             path_and_file = "./candle-web.html" 
             fig.write_html(path_and_file)
 
@@ -499,14 +409,6 @@ def check_cumulative_percent_change(price_data, buy_date, potential_sell_date):
     return sub_series.product() > 1
 
 def get_investing_result(df_stocks, starting_funds, verbose, increase_breaker):
-    # CONTINUAR AQUI
-    # não precisa mais calcular o % de um dia para o outro
-    # mudar dentro do FOR a lógica
-
-
-    #'df_stocks', df_stocks
-
-    #get a copy of price data
     price_data = df_stocks.price
     
     #at start, not holding any shares
@@ -534,15 +436,6 @@ def get_investing_result(df_stocks, starting_funds, verbose, increase_breaker):
         data = df_stocks.iloc[i]
         # Check for Circuit Breaker Condition
         if (data['pct_change']==True and increase_breaker_cnt==0 and holding==True):
-
-            #print("===========================")
-            #print(" date => " + str(date))
-            #print(" data.pct_change => " + str(data.pct_change))
-            #print(" increase_breaker_cnt => " + str(increase_breaker_cnt))
-            #print(" holding => " + str(holding))
-            #Sell all stocks even with loss 
-            # vende tudo e marca pra não comprar em x dias, seta holding pra false
-
             #check to make sure we're making a profit
             if check_cumulative_percent_change(price_data, last_buy_date, data['Date']):
                 current_funds += current_shares * data['price']
@@ -674,7 +567,7 @@ def calculateReturn(tickerSymbol, priceData, initial_invest, increase_days, decr
     estimate_return = percent_change * 100
     st.markdown("Estimated return is :       ** " + str(round(estimate_return,2)) + "%**")
 
-    st.markdown("Estimated amount if buy and hold is : ** ${:0,.2f} **".format(first_buy_stock_amt * final_stock_price))
+    st.markdown("Estimated amount if you bought and holded is : ** ${:0,.2f} **".format(first_buy_stock_amt * final_stock_price))
 
     ### Graph
 #    fig = plt.figure(figsize=(10,4))
@@ -718,5 +611,4 @@ def main():
         calculateReturn(tickerSymbol, priceData, initial_invest, increase_days, decrease_days, circuit_breaker, increase_breaker)
         #st.sidebar.balloons()
 
-
-main()        
+main() 
