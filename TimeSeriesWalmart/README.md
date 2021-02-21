@@ -2,11 +2,14 @@
 
 ## What does this jupyter notebook is aimed for  ?
 
-The goal for this notebook is to understand time series forecasting models such as ARIMA, its parameters (p,d,q), as well as its variation SARIMA.
+The goal with this notebook is to understand time series forecasting models such as ARIMA, its parameters (p,d,q), as well as its variation SARIMA.
 
 AR(p): Auto-regression term => The lags of the previous value (from the pacf test)
+
 I(d):  Integral term        => For non-stationary differencing
+
 MA(q): Moving Average       => For the error term (from the acf test)
+
 
 I am using the dataset ¨Store Item Demand Forecasting" from Kaggle Challenge.
 
