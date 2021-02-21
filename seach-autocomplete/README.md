@@ -37,6 +37,8 @@ After that run again "Compose Up", if it doesn't work try "Compose Restart" usin
 ![plot](./pic1.png)
 ![plot](./pic2.png)
 ![plot](./pic3.png)
+![plot](./pic4.png)
+![plot](./pic5.png)
 <!--<img src="./pic1.png">-->
 
 - Have Fun !!!
